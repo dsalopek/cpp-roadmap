@@ -7,6 +7,8 @@ void displaySensor(const std::string &sensorName, int sensorValue);
 
 int updateSensor(const std::string &sensorName);
 
+void printNewLine();
+
 int main() {
     printStartup();
 
@@ -16,15 +18,15 @@ int main() {
 
     displaySensor("Temperature", temperature);
     temperature = updateSensor("Temperature");
-    std::cout << '\n';
+    printNewLine();
 
     displaySensor("Pressure", pressure);
     pressure = updateSensor("Pressure");
-    std::cout << '\n';
+    printNewLine();
 
     displaySensor("Humidity", humidity);
     humidity = updateSensor("Humidity");
-    std::cout << '\n';
+    printNewLine();
 
     displaySensor("Temperature", temperature);
     displaySensor("Pressure", pressure);
@@ -38,7 +40,7 @@ void printStartup() {
     std::cout << "Program name: sensor-simulation\n";
     std::cout << "Program version: 0.0.1\n";
     std::cout << "Program author: Dylan\n";
-    std::cout << '\n';
+    printNewLine();
 }
 
 void displaySensor(const std::string &sensorName, int sensorValue) {
@@ -50,4 +52,8 @@ int updateSensor(const std::string &sensorName) {
     int newValue{};
     std::cin >> newValue;
     return newValue;
+}
+
+void printNewLine() {
+    std::cout << '\n';
 }
