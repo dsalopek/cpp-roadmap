@@ -1,26 +1,45 @@
 #include <iostream>
+#include <string>
 
-double calculateDistanceTravelled(double initialHeight, int seconds);
-
-int main() {
-    std::cout << "Enter the height of the tower in meters: ";
-    double height{};
-    std::cin >> height;
-
-    for (int i = 0; i <= 5; i++) {
-        double heightAfterTime = calculateDistanceTravelled(height, i);
-        std::cout << "At " << i << " seconds, the ball is at height: " << heightAfterTime << " meters.\n";
-    }
+std::string getUserName(int userNumber) {
+    std::string name{};
+    std::cout << "Enter the name of person #" << userNumber << ": ";
+    std::getline(std::cin >> std::ws, name);
+    return name;
 }
 
-double calculateDistanceTravelled(double initialHeight, int seconds) {
-    const double GRAVITY_CONSTANT {9.8};
-    double height {};
+int getUserAge(std::string_view userName) {
+    int age{};
+    std::cout << "Enter the age of " << userName << ": ";
+    std::cin >> age;
+    return age;
+}
 
-    height = initialHeight - (GRAVITY_CONSTANT * (seconds * seconds) / 2.0);
-    if (height < 0.0) {
-        height = 0.0;
+void printAgeComparison(std::string_view olderName, int   olderAge,
+                        std::string_view youngerName, int youngerAge) {
+    std::cout << olderName << " (age " << olderAge << ") is older than " <<
+            youngerName <<
+            " (age" << youngerAge << ").\n";
+}
+
+int main() {
+    const std::string name1{getUserName(1)};
+    const int         age1{getUserAge(name1)};
+
+    const std::string name2{getUserName(2)};
+    const int         age2{getUserAge(name2)};
+
+    if (age1 > age2) {
+        printAgeComparison(name1, age1, name2, age2);
+    } else {
+        printAgeComparison(name2, age2, name1, age1);
     }
 
-    return height;
+    // Enter the name of person #1: John Bacon
+    // Enter the age of John Bacon: 37
+    // Enter the name of person #2: David Jenkins
+    // Enter the age of David Jenkins: 44
+    // David Jenkins (age 44) is older than John Bacon (age 37).
+
+    return 0;
 }
