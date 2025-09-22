@@ -7,4 +7,5 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_COMPILE_WARNING_AS_ERROR ON)
 set(CMAKE_LINK_WARNING_AS_ERROR ON)
 add_compile_options( -Wall -Wextra -Wshadow -Wconversion -Wpedantic)
-add_executable(sandbox main.cpp)
+add_executable(sandbox main.cpp
+        Random.h)
