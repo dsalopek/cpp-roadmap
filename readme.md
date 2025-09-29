@@ -116,7 +116,7 @@
 **LearnCpp Chapters:** 14.1–14.10, 15.1–15.4
 
 **Deliverables:**
-- [ ] **Convert Structs into Classes**
+- [x] **Convert Structs into Classes**
 
 **Objectives:**
 1. Convert `Sensor` struct into a class with member functions.
