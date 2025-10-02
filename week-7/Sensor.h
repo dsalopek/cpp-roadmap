@@ -11,8 +11,6 @@
 #include <string_view>
 #include <ostream>
 #include <optional>
-#include <cstdint>
-#include <bitset>
 #include <vector>
 
 namespace Sensors {
@@ -25,10 +23,10 @@ namespace Sensors {
     };
 
     enum class Status : std::uint8_t {
-        INACTIVE = 0,
-        ACTIVE   = 1 << 0,
-        DEGRADED = 1 << 1,
-        ERROR    = 1 << 2,
+        ENABLED  = 0b0001,
+        DEGRADED = 0b0010,
+        ERROR    = 0b0100,
+        ONLINE    = 0b1000,
     };
 
     class Sensor {
@@ -43,19 +41,25 @@ namespace Sensors {
 
         double sensorValue() const;
 
-        std::string_view getSensorUnits() const;
+        std::string_view sensorValueUnits() const;
+
+        std::uint8_t sensorStatus() const;
+
+        std::string sensorStatusDisplay() const;
 
         void updateSensorName(const std::string &newName);
 
         void updateSensorValue(double newValue);
 
+        void updateSensorStatus(Status option, bool flip);
 
+        void resetSensorStatus();
 
     private:
-        std::string    m_sensorName;
-        SensorType     m_sensorType{};
-        double         m_sensorValue{};
-        std::bitset<4> m_sensorStatus{};
+        std::string  m_sensorName;
+        SensorType   m_sensorType{};
+        double       m_sensorValue{};
+        std::uint8_t m_sensorStatus{};
     };
 
     std::ostream &operator<<(std::ostream &out, const Sensor &sensor);
@@ -67,8 +71,6 @@ namespace Sensors {
     std::optional<SensorType> getSensorTypeBySelector(char selector);
 
     std::string_view getSensorTypeDisplay(SensorType sensorType);
-
-    std::vector<std::string>
 }
 
 
