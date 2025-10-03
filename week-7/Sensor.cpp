@@ -5,17 +5,14 @@
 #include "Sensor.h"
 #include <string>
 #include <string_view>
-#include <utility>
 #include <iostream>
-#include <optional>
+#include <cstdint>
+#include <vector>
+#include <bitset>
 
 namespace Sensors {
     std::string_view Sensor::sensorName() const {
         return m_sensorName;
-    }
-
-    SensorType Sensor::sensorType() const {
-        return m_sensorType;
     }
 
     double Sensor::sensorValue() const {
@@ -24,14 +21,10 @@ namespace Sensors {
 
     void Sensor::updateSensorStatus(const Status option, const bool flip) {
         if (flip) {
-            m_sensorStatus ^= ~static_cast<std::uint8_t>(option);
+            m_sensorStatus ^= static_cast<std::uint8_t>(option);
         } else {
             m_sensorStatus |= static_cast<std::uint8_t>(option);
         }
-    }
-
-    void Sensor::resetSensorStatus() {
-        m_sensorStatus = static_cast<std::uint8_t>(Status::ENABLED);
     }
 
     std::uint8_t operator|(const Status lhs, const Status rhs) {
@@ -46,32 +39,50 @@ namespace Sensors {
         return lhs & static_cast<std::uint8_t>(rhs);
     }
 
+    std::uint8_t operator|(const std::uint8_t lhs, const Status rhs) {
+        return lhs | static_cast<std::uint8_t>(rhs);
+    }
+
+    bool Sensor::isEnabled() const {
+        return m_sensorStatus & Status::ENABLED;
+    }
+
+    void Sensor::resetSensorStatus() {
+        m_sensorStatus = {
+            Status::ENABLED |
+            Status::ONLINE |
+            Status::HEALTHY |
+            Status::NOMINAL
+        };
+    }
+
+
     std::uint8_t Sensor::sensorStatus() const {
-        return static_cast<std::uint8_t>(m_sensorType);
+        return m_sensorStatus;
+    }
+
+    static std::string getStatusDisplay(const Sensor &     sensor,
+                                        const Status       status,
+                                        const std::string &positive,
+                                        const std::string &negative) {
+        if (sensor.sensorStatus() & status)
+            return positive;
+        return negative;
     }
 
     std::string Sensor::sensorStatusDisplay() const {
         std::vector<std::string> statusDisplay{};
-        if (m_sensorStatus & Status::ENABLED) {
-            statusDisplay.emplace_back("Enabled");
-        } else {
-            statusDisplay.emplace_back("Disabled");
-        }
-        if (m_sensorStatus & Status::ONLINE) {
-            statusDisplay.emplace_back("Online");
-        } else {
-            statusDisplay.emplace_back("Offline");
-        }
-        if (m_sensorStatus & Status::DEGRADED) {
-            statusDisplay.emplace_back("Degraded");
-        } else {
-            statusDisplay.emplace_back("Healthy");
-        }
-        if (m_sensorStatus & Status::ERROR) {
-            statusDisplay.emplace_back("Error");
-        } else {
-            statusDisplay.emplace_back("No error");
-        }
+        statusDisplay.emplace_back(getStatusDisplay(
+            *this, Status::ENABLED, "Enabled",
+            "Disabled"));
+        statusDisplay.emplace_back(getStatusDisplay(
+            *this, Status::ONLINE, "Online",
+            "Offline"));
+        statusDisplay.emplace_back(getStatusDisplay(
+            *this, Status::HEALTHY, "Healthy",
+            "Degraded"));
+        statusDisplay.emplace_back(
+            getStatusDisplay(*this, Status::NOMINAL, "Nominal", "Error"));
 
         std::string separator;
         std::string statusDisplayString{"["};
@@ -84,43 +95,13 @@ namespace Sensors {
         return statusDisplayString;
     }
 
+    const SensorMetadata &Sensor::sensorMetadata() const {
+        return *m_sensorMetadata;
+    }
+
     constexpr std::array<SensorType, max_sensor_types> sensorTypes = {
         temperature, humidity, pressure, altitude
     };
-
-    constexpr std::array<std::string_view, max_sensor_types> sensorUnits = {
-        "°F", "%", "inHg", "ft",
-    };
-
-    constexpr std::array<std::pair<char, std::string_view>, max_sensor_types>
-    sensorSelectorAndDisplayNames{
-        {
-            {'t', "temperature"},
-            {'h', "humidity"},
-            {'p', "pressure"},
-            {'a', "altitude"}
-        }
-    };
-
-    char getSensorSelector(const SensorType sensorType) {
-        return sensorSelectorAndDisplayNames[sensorType].first;
-    }
-
-    std::optional<SensorType> getSensorTypeBySelector(const char selector) {
-        for (const auto sensorType: sensorTypes) {
-            if (selector == sensorSelectorAndDisplayNames[sensorType].first)
-                return sensorType;
-        }
-        return std::nullopt;
-    }
-
-    std::string_view getSensorTypeDisplay(const SensorType sensorType) {
-        return sensorSelectorAndDisplayNames[sensorType].second;
-    }
-
-    std::string_view Sensor::sensorValueUnits() const {
-        return sensorUnits[sensorType()];
-    }
 
     void Sensor::updateSensorName(const std::string &newName) {
         if (!newName.empty()) {
@@ -133,23 +114,38 @@ namespace Sensors {
     }
 
     std::ostream &operator<<(std::ostream &out, const Sensor &sensor) {
-        return out << sensor.sensorType() << " (" << sensor.sensorName() <<
-               ") | value: " << sensor.sensorValue() << sensor.
-               sensorValueUnits() << " | status flags: " << sensor.
+        return out << sensor.sensorMetadata().sensorDisplayName << " (" <<
+               sensor.
+               sensorName() << ") | value: " << sensor.sensorValue() << sensor.
+               sensorMetadata().sensorUnits << " | status flags: " << sensor.
                sensorStatusDisplay();
     }
 
-    std::ostream &operator<<(std::ostream &out, const SensorType sensorType) {
-        return out << getSensorTypeDisplay(sensorType);
+    Sensor::Sensor(const std::string &   name,
+                   const SensorMetadata &sensorMetadata,
+                   const double          initialValue) : m_sensorName{name},
+                                                m_sensorValue{initialValue},
+                                                m_sensorStatus{
+                                                    Status::ENABLED |
+                                                    Status::ONLINE |
+                                                    Status::HEALTHY |
+                                                    Status::NOMINAL
+                                                },
+                                                m_sensorMetadata{
+                                                    &sensorMetadata
+                                                } {
     }
 
-    Sensor::Sensor(const std::string &name, const SensorType type,
-                   const double       initialValue) : m_sensorName{name},
-        m_sensorType{type},
-        m_sensorValue{initialValue},
-        m_sensorStatus{
-            Status::ENABLED |
-            Status::ONLINE
-        } {
+    constexpr std::uint8_t operator~(Status status) {
+        return static_cast<std::uint8_t>(~static_cast<std::uint8_t>(status));
+    }
+
+    std::uint8_t getBit(Status status) {
+        return static_cast<std::uint8_t>(status);
+    }
+
+    bool Sensor::isSensorInBadState() const {
+        std::cout << std::bitset<8>(m_sensorStatus);
+        return !(m_sensorStatus & (getBit(Status::ONLINE) | getBit(Status::NOMINAL) | getBit(Status::HEALTHY)));
     }
 }
