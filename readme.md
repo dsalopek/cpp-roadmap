@@ -139,7 +139,7 @@
 **LearnCpp Chapters:** O.1–O.4, 7.1–7.8
 
 **Deliverables:**
-- [ ] **Bitwise Sensor Flags and Scope Demonstrations**
+- [x] **Bitwise Sensor Flags and Scope Demonstrations**
 
 **Objectives:**
 1. Use bitwise flags to represent multiple sensor states (e.g., ERROR, ACTIVE, DISABLED).
