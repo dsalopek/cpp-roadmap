@@ -10,6 +10,7 @@
 #include <string>
 #include <string_view>
 #include <array>
+#include <cstdint>
 
 namespace Sensors {
     enum class SensorType : std::size_t {

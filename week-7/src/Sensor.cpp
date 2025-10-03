@@ -1,7 +1,7 @@
 //
 // Created by ads on 9/28/25.
 //
-#include "Sensor.h"
+#include "../include/Sensor.h"
 #include <string>
 #include <string_view>
 #include <iostream>

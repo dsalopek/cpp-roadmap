@@ -5,7 +5,7 @@
 #include <string>
 #include <vector>
 #include <cstddef>
-#include "Sensor.h"
+#include "../include/Sensor.h"
 
 namespace MenuItems {
     enum MainMenuItems : std::size_t {
