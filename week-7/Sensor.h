@@ -9,11 +9,10 @@
 
 #include <string>
 #include <string_view>
-#include <ostream>
-#include <cstdint>
+#include <array>
 
 namespace Sensors {
-    enum SensorType : std::size_t {
+    enum class SensorType : std::size_t {
         temperature,
         humidity,
         pressure,
@@ -22,10 +21,10 @@ namespace Sensors {
     };
 
     enum class Status : std::uint8_t {
-        ENABLED = 0b0001,
-        HEALTHY = 0b0010,
-        NOMINAL = 0b0100,
-        ONLINE  = 0b1000,
+        enabled = 0b0001,
+        healthy = 0b0010,
+        nominal = 0b0100,
+        online  = 0b1000,
     };
 
     struct SensorMetadata {
@@ -34,12 +33,12 @@ namespace Sensors {
         const std::string_view sensorDisplayName{};
     };
 
-    constexpr std::array<SensorMetadata, max_sensor_types> sensorMetadata{
+    constexpr std::array<SensorMetadata, 4> sensorMetadata{
         {
-            {temperature, "°F", "temperature"},
-            {humidity, "%", "humidity"},
-            {altitude, "ft", "altitude"},
-            {pressure, "inHg", "pressure"},
+            {SensorType::temperature, "°F", "temperature"},
+            {SensorType::humidity, "%", "humidity"},
+            {SensorType::altitude, "ft", "altitude"},
+            {SensorType::pressure, "inHg", "pressure"},
         }
     };
 

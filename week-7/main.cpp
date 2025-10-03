@@ -50,10 +50,10 @@ displaySensorUpdateMenu(const std::vector<Sensors::Sensor> &sensors);
 
 std::size_t getUnsignedNumericInput(std::size_t max);
 
-double getSignedDoubleInput(double min = std::numeric_limits<double>::min(),
+double getSignedDoubleInput(double min = std::numeric_limits<double>::lowest(),
                             double max = std::numeric_limits<double>::max());
 
-std::string getStringInput(bool emptyInputAllowed = false);
+std::string getStringInput();
 
 void displayAllSensors(const std::vector<Sensors::Sensor> &sensors);
 
@@ -111,7 +111,7 @@ int main() {
 
 void printStartup() {
     const std::string name{"main"};
-    const std::string version{"0.0.6"};
+    const std::string version{"0.0.7"};
     const std::string author{"Dylan"};
 
     std::cout << "Starting up...\n";
@@ -138,16 +138,14 @@ void createSensor(std::vector<Sensors::Sensor> &sensors) {
 }
 
 void updateSensors(std::vector<Sensors::Sensor> &sensors) {
-    std::optional<std::size_t> sensorSelection{};
+
 
     while (true) {
-        if (!sensorSelection) {
-            *sensorSelection = displaySensorUpdateMenu(sensors);
-        }
-        if (*sensorSelection == 0)
+        std::size_t sensorSelection{displaySensorUpdateMenu(sensors)};
+        if (sensorSelection == 0)
             break;
 
-        Sensors::Sensor &sensor = sensors[*sensorSelection - 1];
+        Sensors::Sensor &sensor = sensors[sensorSelection - 1];
 
         while (true) {
             std::cout << "Select an option\n";
@@ -161,7 +159,7 @@ void updateSensors(std::vector<Sensors::Sensor> &sensors) {
             const bool sensorInBadState = sensor.isSensorInBadState();
             if (sensorInBadState)
                 std::cout << "4=repair\n";
-            std::cout << "0=back\n>";
+            std::cout << "0=back\n> ";
             int updateSelection{};
             std::cin >> updateSelection;
             if (updateSelection == 0)
@@ -175,7 +173,7 @@ void updateSensors(std::vector<Sensors::Sensor> &sensors) {
                 break;
             }
             if (updateSelection == 3) {
-                sensor.updateSensorStatus(Sensors::Status::ENABLED, true);
+                sensor.updateSensorStatus(Sensors::Status::enabled, true);
                 break;
             }
             if (updateSelection == 4 && sensorInBadState) {
@@ -185,8 +183,6 @@ void updateSensors(std::vector<Sensors::Sensor> &sensors) {
             clearInput();
             std::cout << "Invalid input. Try again\n> ";
         }
-
-        sensor.updateSensorStatus(Sensors::Status::HEALTHY, true);
 
         std::cout << "Sensor updated: " << sensor << "\n";
         std::cout << '\n';
@@ -198,24 +194,16 @@ void clearInput() {
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 }
 
-std::string getStringInput(const bool emptyInputAllowed) {
+std::string getStringInput() {
     std::string sensorName{};
     std::cout << "> ";
     while (true) {
-        clearInput();
-        std::getline(std::cin, sensorName);
-        if ((!emptyInputAllowed && sensorName.empty()) || sensorName.length() >
-            20) {
-            std::cout <<
-                    "Sensor name must be between 1 and 20 characters (inclusive). You inputted "
-                    << sensorName << ", which is " << sensorName.length() <<
-                    " characters. Try again: ";
-        } else if (!std::cin) {
-            clearInput();
-            std::cout << "Invalid input. Try again: ";
-        } else {
+        std::getline(std::cin >> std::ws, sensorName);
+        if (std::cin && !sensorName.empty() && sensorName.length() <= 20) {
             break;
         }
+        clearInput();
+        std::cout << "Invalid input. Name must be between 1 and 20 characters. Try again\n> ";
     }
 
     return sensorName;
@@ -224,7 +212,7 @@ std::string getStringInput(const bool emptyInputAllowed) {
 std::string getSensorNameInput(const Sensors::SensorMetadata &sensorMetadata) {
     std::cout << "Enter a name for " << sensorMetadata.sensorDisplayName;
     std::cout << '\n';
-    return getStringInput(true);
+    return getStringInput();
 }
 
 double getSignedDoubleInput(const double min, const double max) {
@@ -232,7 +220,7 @@ double getSignedDoubleInput(const double min, const double max) {
     std::cout << "> ";
     while (true) {
         std::cin >> value;
-        if (value >= min && value <= max) {
+        if (std::cin && value >= min && value <= max) {
             break;
         }
         clearInput();
@@ -269,11 +257,11 @@ std::size_t getUnsignedNumericInput(const std::size_t max) {
     std::cout << "> ";
     while (true) {
         std::cin >> sensorSelection;
-        if (sensorSelection == 0 || sensorSelection <= max) {
+        if (std::cin && (sensorSelection == 0 || sensorSelection <= max)) {
             break;
         }
-        std::cin.clear();
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        clearInput();
+
         std::cout << "Invalid input. Try again\n> ";
     }
     return sensorSelection;
@@ -305,6 +293,7 @@ std::size_t
 displaySensorUpdateMenu(const std::vector<Sensors::Sensor> &sensors) {
     std::cout << "== Select a sensor to update ==\n";
     if (sensors.empty()) {
+        std::cout << "No sensors found. Please add one to update.\n";
         //return 0 if sensors is empty so it emulates 'back'
         return 0;
     }
@@ -326,39 +315,4 @@ void displayAllSensors(const std::vector<Sensors::Sensor> &sensors) {
             std::cout << sensor << '\n';
         }
     }
-}
-
-std::string getSensorDisplay(const Sensors::SensorType sensorType) {
-    switch (sensorType) {
-        case Sensors::temperature:
-            return "temperature";
-        case Sensors::humidity:
-            return "humidity";
-        case Sensors::pressure:
-            return "pressure";
-        case Sensors::altitude:
-            return "altitude";
-        default:
-            return "???";
-    }
-}
-
-std::string getSensorUnits(const Sensors::SensorType sensorType) {
-    switch (sensorType) {
-        case Sensors::temperature:
-            return "C";
-        case Sensors::humidity:
-            return "%";
-        case Sensors::pressure:
-            return "hPa";
-        case Sensors::altitude:
-            return "m";
-        default:
-            return "???";
-    }
-}
-
-std::ostream &operator<<(std::ostream &            out,
-                         const Sensors::SensorType sensorType) {
-    return out << getSensorDisplay(sensorType);
 }

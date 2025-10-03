@@ -1,28 +1,29 @@
 # Purpose
 
-Menu-driven sensor bank simulator, defined by the user. Sensors can be added as needed, including naming as well as
-initial value.
-Values can be updated and the updated value is printed to the console.
-Final values are printed to the console.
+Console-based sensor management program. Allows the user to add, update, and display sensors for temperature, humidity,
+pressure, and altitude.
 
 # Requirements:
 
 - 4 sensors types are supported: temperature, humidity, pressure, altitude.
-- Exactly one sensor of each type can be added.
+- Unlimited sensors can be added.
 - Sensors can be updated once added.
+    - name
+    - value
+    - disable/enable
+- Sensors can be displayed
 
 # Design Considerations, Assumptions, and Limitations:
 
-- Active sensors are tracked by a flag array, as there is only a set amount of sensor types and constraint that there
-  can only be one sensor per type.
-- Enum type is used for vector and array indexing, and has a underlying type of `std::size_t` for safe indexing and size
-  usage
-- `std::optional` is used for sensor menu selection (display and update) to get the sensorType to allow us to select the
-  exit (`0`) value.
+- Active sensors are kept in a vector since any amount of sensors can be added.
+- Sensor metadata (aggregation of sensor data per sensor type) is stored in a struct
+- Input is validated, ie for ints (menu selections), doubles (sensor values), and strings (sensor names)
+- Sensor flags are tracked as bits in a `std::uint8_t` var, which allows us to perform bitwise operations on the
+  flags. (for now just enable/disable and checking if the sensor status is in a 'good' state)
 
-**WEEK 6 ENHANCEMENTS** 
-- Updated `Sensor` struct to class. Also reorganized class and `Sensors` namespace to be a separate header and cpp class, so that Sensors can be reused outside of the context of this specific program.
-- Included a `SensorBank` to track state of active sensors
+**WEEK 7 Changelog**
+- Allow unlimited sensors to be added instead of 1 of each type
+- Included bit flags to track sensor status (and update too)
 
 # Instructions
 
@@ -33,62 +34,179 @@ Compile and run `main.cpp`
 ```
 Starting up...
 Program name: main
-Program version: 0.0.6
+Program version: 0.0.7
 Program author: Dylan
 
-== Create a new sensor ==
-(t=temperature, h=humidity, p=pressure, a=altitude): t
-Enter a name for temperature: temp
-Enter the value for temp (temperature): 15
-Sensor added: temperature (temp) | value: 15°F
-
 == Select an operation ==
-(1=display sensor, 2=update sensor, 3=display all sensors and values, 4=add another sensor, 0=exit): 2
+1=add new sensor
+2=update sensors
+3=display all sensors
+0=exit
+> 2
 
 == Select a sensor to update ==
-(t=temperature, 0=back): t
-Enter the value for temp (temperature): 24
-temperature (temp) | value: 24°F
+No sensors found. Please add one to update.
+
+== Select an operation ==
+1=add new sensor
+2=update sensors
+3=display all sensors
+0=exit
+> 3
+
+== Active sensors ==
+No sensors found. Please add one to view.
+
+== Select an operation ==
+1=add new sensor
+2=update sensors
+3=display all sensors
+0=exit
+> 1
+
+== Select a sensor type to create ==
+1=temperature
+2=humidity
+3=altitude
+4=pressure
+0=back
+> 1
+Enter a name for temperature
+> t1
+Enter a value for t1 (temperature °F)
+> 112
+Sensor added: temperature (t1) | value: 112°F | status flags: [Enabled, Online, Healthy, Nominal]
+
+== Select an operation ==
+1=add new sensor
+2=update sensors
+3=display all sensors
+0=exit
+> 1
+
+== Select a sensor type to create ==
+1=temperature
+2=humidity
+3=altitude
+4=pressure
+0=back
+> 1
+Enter a name for temperature
+> t2
+Enter a value for t2 (temperature °F)
+> 155
+Sensor added: temperature (t2) | value: 155°F | status flags: [Enabled, Online, Healthy, Nominal]
+
+== Select an operation ==
+1=add new sensor
+2=update sensors
+3=display all sensors
+0=exit
+> 3
+
+== Active sensors ==
+temperature (t1) | value: 112°F | status flags: [Enabled, Online, Healthy, Nominal]
+temperature (t2) | value: 155°F | status flags: [Enabled, Online, Healthy, Nominal]
+
+== Select an operation ==
+1=add new sensor
+2=update sensors
+3=display all sensors
+0=exit
+> 2
 
 == Select a sensor to update ==
-(t=temperature, 0=back): 0
+1=t1 (temperature)
+2=t2 (temperature)
+0=back
+> 1
+Select an option
+1=name
+2=value
+3=disable
+0=back
+> 1
+Enter a name for temperature
+> t1.1
+Sensor updated: temperature (t1.1) | value: 112°F | status flags: [Enabled, Online, Healthy, Nominal]
+
+== Select a sensor to update ==
+1=t1.1 (temperature)
+2=t2 (temperature)
+0=back
+> 1
+Select an option
+1=name
+2=value
+3=disable
+0=back
+> 2
+Enter a value for t1.1 (temperature °F)
+> 212
+Sensor updated: temperature (t1.1) | value: 212°F | status flags: [Enabled, Online, Healthy, Nominal]
+
+== Select a sensor to update ==
+1=t1.1 (temperature)
+2=t2 (temperature)
+0=back
+> 1
+Select an option
+1=name
+2=value
+3=disable
+0=back
+> 3
+Sensor updated: temperature (t1.1) | value: 212°F | status flags: [Disabled, Online, Healthy, Nominal]
+
+== Select a sensor to update ==
+1=t1.1 (temperature)
+2=t2 (temperature)
+0=back
+> 0
 
 == Select an operation ==
-(1=display sensor, 2=update sensor, 3=display all sensors and values, 4=add another sensor, 0=exit): 4
-
-== Create a new sensor ==
-(h=humidity, p=pressure, a=altitude): p
-Enter a name for pressure: pres
-Enter the value for pres (pressure): 29.92
-Sensor added: pressure (pres) | value: 29.92inHg
-
-== Select an operation ==
-(1=display sensor, 2=update sensor, 3=display all sensors and values, 4=add another sensor, 0=exit): 3
+1=add new sensor
+2=update sensors
+3=display all sensors
+0=exit
+> 3
 
 == Active sensors ==
-temperature (temp) | value: 24°F
-pressure (pres) | value: 29.92inHg
+temperature (t1.1) | value: 212°F | status flags: [Disabled, Online, Healthy, Nominal]
+temperature (t2) | value: 155°F | status flags: [Enabled, Online, Healthy, Nominal]
 
 == Select an operation ==
-(1=display sensor, 2=update sensor, 3=display all sensors and values, 4=add another sensor, 0=exit): 4
+1=add new sensor
+2=update sensors
+3=display all sensors
+0=exit
+> 2
 
-== Create a new sensor ==
-(h=humidity, a=altitude): a
-Enter a name for altitude: alt
-Enter the value for alt (altitude): 15000
-Sensor added: altitude (alt) | value: 15000ft
+== Select a sensor to update ==
+1=t1.1 (temperature)
+2=t2 (temperature)
+0=back
+> 1
+Select an option
+1=name
+2=value
+3=enable
+0=back
+> 3
+Sensor updated: temperature (t1.1) | value: 212°F | status flags: [Enabled, Online, Healthy, Nominal]
+
+== Select a sensor to update ==
+1=t1.1 (temperature)
+2=t2 (temperature)
+0=back
+> 0
 
 == Select an operation ==
-(1=display sensor, 2=update sensor, 3=display all sensors and values, 4=add another sensor, 0=exit): 3
+1=add new sensor
+2=update sensors
+3=display all sensors
+0=exit
+> 0
 
-== Active sensors ==
-temperature (temp) | value: 24°F
-pressure (pres) | value: 29.92inHg
-altitude (alt) | value: 15000ft
-
-== Select an operation ==
-(1=display sensor, 2=update sensor, 3=display all sensors and values, 4=add another sensor, 0=exit): 0
-
-
-Process finished with exit code 0
+Exiting...
 ```
