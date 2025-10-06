@@ -1,5 +1,9 @@
+# ==============
+# Compiler flags
 CXX := g++
 CXX_FLAGS := -std=c++17 -Wall -Wextra -Werror -Iinclude
+# ==============
+# Compiler flags
 
 # =================
 # Main build config
@@ -24,8 +28,8 @@ TEST_TARGET := $(BUILD_DIR)/application_test
 # Test build config
 # =================
 
-# =====================
-# Test/GoogleTest stuff
+# ==========
+# GoogleTest
 # Test information
 EXTERNAL_DIR := external
 # GTEST
@@ -46,13 +50,13 @@ GTEST_MAIN_OBJ := $(BUILD_DIR)/gtest_main.o
 GTEST_CXX_FLAGS := -I$(GTEST_INCLUDE_DIR) -I$(GTEST_INTERNAL_INCLUDE) -pthread
 # GTEST linker flag
 GTEST_LDFLAGS := -pthread
-# Test/GoogleTest stuff
-# =====================
+# GoogleTest
+# ==========
 
 # ===========
 # Build rules
 # first target has prerequisite of the executable. so make will look for the executable target (build/application)
-all: $(TARGET)
+build: $(TARGET)
 
 # the executable target has a prerequisite of $(OBJS), which at the time of writing is build/main.o and build/Sensor.o.
 # so expanded, this looks like: application: build/main.o build/Sensor.o. So make will look for these targets
@@ -84,8 +88,7 @@ $(GTEST_MAIN_OBJ): $(GTEST_SRC_DIR)/gtest_main.cc
 
 # ================
 # Test build rules
-test: $(TEST_TARGET)
-	./$(TEST_TARGET)
+build-test: $(TEST_TARGET)
 
 $(TEST_TARGET): $(TEST_OBJS) $(SENSOR_OBJ) $(GTEST_OBJ) $(GTEST_MAIN_OBJ)
 	# link objects to test target
@@ -97,6 +100,16 @@ $(BUILD_DIR)/%.o: $(TEST_DIR)/%.cpp
 	$(CXX) $(CXX_FLAGS) $(GTEST_CXX_FLAGS) -c $< -o $@
 # Test build rules
 # ================
+
+# ===========
+# Run targets
+run: $(TARGET)
+	./$(TARGET)
+
+test: $(TEST_TARGET)
+	./$(TEST_TARGET)
+# Run targets
+# ===========
 
 # ===============
 # Utility targets
