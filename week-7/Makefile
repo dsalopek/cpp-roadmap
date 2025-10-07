@@ -53,6 +53,8 @@ GTEST_LDFLAGS := -pthread
 # GoogleTest
 # ==========
 
+all: build
+
 # ===========
 # Build rules
 # first target has prerequisite of the executable. so make will look for the executable target (build/application)
