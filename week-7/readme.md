@@ -24,10 +24,17 @@ pressure, and altitude.
 **WEEK 7 Changelog**
 - Allow unlimited sensors to be added instead of 1 of each type
 - Included bit flags to track sensor status (and update too)
+- **Add GoogleTest support**
+- **Convert cmake to make**
 
 # Instructions
-
-Compile and run `main.cpp`
+Make rules:
+- To build executable `make build`
+- To build test executable `make build test`
+- To run executable `make run`
+- To run test executable `make test`
+- To clean up builds `make clean` 
+  - Warning this cleans up GoogleTest local build
 
 # Example Output
 
