@@ -1,0 +1,79 @@
+#ifndef WEEK_8_PERSISTENCE
+
+#define WEEK_8_PERSISTENCE
+
+#include "../include/Persistence.h"
+#include "../include/Sensor.h"
+#include <vector>
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <string>
+#include <string_view>
+#include <optional>
+
+namespace CSV {
+    std::vector<Sensors::Sensor>& loadSensorData(std::vector<Sensors::Sensor>& sensors, const std::string filename) {
+        std::fstream file{filename, (std::ios::in | std::ios::out)};
+        if (file.is_open()) {
+            std::cout << "File already exists\n";
+        } else {
+            std::cout << "File does not exist. Skipping.\n";
+            return sensors;
+        }
+
+
+        std::string str{};
+        //skip header
+        std::getline(file, str);
+
+        while(std::getline(file, str)) {
+            try {
+                std::stringstream line{str};
+                std::string sensorType{};
+                std::getline(line, sensorType, ',');
+                std::string sensorName{};
+                std::getline(line, sensorName, ',');
+                std::string sensorValue{};
+                std::getline(line, sensorValue, ',');
+                std::string sensorStatus{};
+                std::getline(line, sensorStatus, ',');
+
+                for (const auto& sm : Sensors::sensorMetadata) {
+                    if (sm.sensorDisplayName == sensorType) {
+                        Sensors::Sensor sensor {sensorName, sm, std::stod(sensorValue), static_cast<std::uint8_t>(std::stoi(sensorStatus))};
+                        sensors.emplace_back(sensor);
+                    }
+                }
+            } catch(std::exception& e){
+                std::cout << "Unable to parse line, skipping. Cause: " << e.what() << '\n'; 
+            }
+        }
+
+        return sensors;
+    }
+
+    bool saveSensorData(const std::vector<Sensors::Sensor>& sensors, const std::string filename) {
+        if(sensors.empty()) {
+            return false;
+        }
+
+        std::fstream file{filename, (std::ios::in | std::ios::out)};
+        if(!file.is_open()) {
+            std::cout << "File does not exist. Creating it.\n";
+            file.open(filename, std::ios::out);
+        }
+        file << header;
+        for(const auto& sensor: sensors) {
+            file << '\n' << sensor.sensorMetadata().sensorDisplayName << ',' << sensor.sensorName() << ',' << sensor.sensorValue() << ',' << static_cast<int>(sensor.sensorStatus());
+        }
+
+        bool success = file.good();
+        file.clear();
+        file.close();
+
+        return success;
+    }
+}
+
+#endif //WEEK_8_PERSISTENCE

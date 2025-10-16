@@ -44,3 +44,4 @@
 
 build/
 cmake-build-*/
+.vscode/

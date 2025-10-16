@@ -1,0 +1,4 @@
+sensorType,sensorName,value,status
+temperature,T1,100,15
+humidity,h1,10,15
+pressure,P1,29.92,15
