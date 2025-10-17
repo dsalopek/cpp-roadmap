@@ -51,7 +51,7 @@ namespace Sensors {
                double             initialValue);
 
         Sensor(const std::string &name, const SensorMetadata &sensorMetadata,
-               double             initialValue, std::uint8_t status);
+               double             initialValue, std::uint8_t sensorStatus);
 
         std::string_view sensorName() const;
 

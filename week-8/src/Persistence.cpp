@@ -13,8 +13,9 @@
 #include <optional>
 
 namespace CSV {
-    std::vector<Sensors::Sensor>& loadSensorData(std::vector<Sensors::Sensor>& sensors, const std::string filename) {
+    std::vector<Sensors::Sensor>& loadSensorData(std::vector<Sensors::Sensor>& sensors, const std::string& filename) {
         std::fstream file{filename, (std::ios::in | std::ios::out)};
+        std::cout << "Attempting to load existing sensor data from file: " << filename << '\n';
         if (file.is_open()) {
             std::cout << "File already exists\n";
         } else {
@@ -50,14 +51,17 @@ namespace CSV {
             }
         }
 
+        std::cout << '\n';
+
         return sensors;
     }
 
-    bool saveSensorData(const std::vector<Sensors::Sensor>& sensors, const std::string filename) {
+    bool saveSensorData(const std::vector<Sensors::Sensor>& sensors, const std::string& filename) {
         if(sensors.empty()) {
             return false;
         }
 
+        std::cout << "Saving sensor data to file: " << filename << '\n';
         std::fstream file{filename, (std::ios::in | std::ios::out)};
         if(!file.is_open()) {
             std::cout << "File does not exist. Creating it.\n";
@@ -68,9 +72,11 @@ namespace CSV {
             file << '\n' << sensor.sensorMetadata().sensorDisplayName << ',' << sensor.sensorName() << ',' << sensor.sensorValue() << ',' << static_cast<int>(sensor.sensorStatus());
         }
 
-        bool success = file.good();
+        const bool success = file.good();
         file.clear();
         file.close();
+
+        std::cout << "Save was " << (success ? "successful" : "unsuccessful") << ".\n";
 
         return success;
     }

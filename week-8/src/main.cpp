@@ -128,8 +128,8 @@ void createSensor(std::vector<Sensors::Sensor> &sensors) {
         return;
     const Sensors::SensorMetadata &sensorMetadata = Sensors::sensorMetadata[
         --selection];
-    const std::string sensorName = getSensorNameInput(sensorMetadata);
-    Sensors::Sensor   sensor{
+    const std::string     sensorName = getSensorNameInput(sensorMetadata);
+    const Sensors::Sensor sensor{
         sensorName, sensorMetadata,
         getSensorValueInput(sensorName, sensorMetadata)
     };
@@ -139,10 +139,8 @@ void createSensor(std::vector<Sensors::Sensor> &sensors) {
 }
 
 void updateSensors(std::vector<Sensors::Sensor> &sensors) {
-
-
     while (true) {
-        std::size_t sensorSelection{displaySensorUpdateMenu(sensors)};
+        const std::size_t sensorSelection{displaySensorUpdateMenu(sensors)};
         if (sensorSelection == 0)
             break;
 
@@ -204,7 +202,8 @@ std::string getStringInput() {
             break;
         }
         clearInput();
-        std::cout << "Invalid input. Name must be between 1 and 20 characters. Try again\n> ";
+        std::cout <<
+                "Invalid input. Name must be between 1 and 20 characters. Try again\n> ";
     }
 
     return sensorName;
