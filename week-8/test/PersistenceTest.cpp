@@ -36,7 +36,7 @@ TEST(PersistenceTest, BadSensorDataInFile) {
     f.close();
 
     sensors = CSV::loadSensorData(sensors, filepath);
-    ASSERT_EQ(static_cast<std::size_t>(0), sensors.size()) << "Sensors size is not 3";
+    ASSERT_EQ(static_cast<std::size_t>(0), sensors.size()) << "Sensors size is not 0";
 
     removeFile(filepath);
 }
@@ -51,7 +51,7 @@ TEST(PersistenceTest, BadLineSensorDataInFile) {
     f.close();
 
     sensors = CSV::loadSensorData(sensors, filepath);
-    ASSERT_EQ(static_cast<std::size_t>(1), sensors.size()) << "Sensors size is not 3";
+    ASSERT_EQ(static_cast<std::size_t>(1), sensors.size()) << "Sensors size is not 1";
 
     removeFile(filepath);
 }
