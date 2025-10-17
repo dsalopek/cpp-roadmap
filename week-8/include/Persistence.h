@@ -1,11 +1,21 @@
+#ifndef WEEK_8_PERSISTENCE
+
+#define WEEK_8_PERSISTENCE
+
 #include "Sensor.h"
 #include <vector>
 #include <string>
 
 namespace CSV {
     constexpr std::string_view header = "sensorType,sensorName,value,status";
-    const std::string defaultFilename = "data.csv";
+    const std::string          defaultFilename = "data.csv";
 
-    std::vector<Sensors::Sensor>& loadSensorData(std::vector<Sensors::Sensor>& sensors, const std::string& filename = defaultFilename);
-    bool saveSensorData(const std::vector<Sensors::Sensor>& sensors, const std::string& filename = defaultFilename);
+    std::vector<Sensors::Sensor> &loadSensorData(
+        std::vector<Sensors::Sensor> &sensors,
+        const std::string &           filename = defaultFilename);
+
+    bool saveSensorData(const std::vector<Sensors::Sensor> &sensors,
+                        const std::string &filename = defaultFilename);
 }
+
+#endif //WEEK_8_PERSISTENCE

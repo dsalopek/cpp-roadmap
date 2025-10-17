@@ -1,7 +1,3 @@
-#ifndef WEEK_8_PERSISTENCE
-
-#define WEEK_8_PERSISTENCE
-
 #include "../include/Persistence.h"
 #include "../include/Sensor.h"
 #include <vector>
@@ -81,5 +77,3 @@ namespace CSV {
         return success;
     }
 }
-
-#endif //WEEK_8_PERSISTENCE
