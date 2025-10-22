@@ -45,3 +45,5 @@
 build/
 cmake-build-*/
 .vscode/
+
+.DS_STORE
