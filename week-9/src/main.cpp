@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 #include <cstddef>
+#include <type_traits>
 #include "../include/Sensor.h"
 #include "../include/Persistence.h"
 
@@ -60,7 +61,8 @@ void displayAllSensors(const std::vector<Sensors::Sensor> &sensors);
 
 void updateSensors(std::vector<Sensors::Sensor> &sensors);
 
-void resetSensorStatus(Sensors::Sensor &sensor);
+template <typename T>
+void updateSensor(Sensors::Sensor &sensor, T value);
 
 void clearInput();
 
@@ -164,6 +166,7 @@ void updateSensors(std::vector<Sensors::Sensor> &sensors) {
             if (updateSelection == 0)
                 return;
             if (updateSelection == 1) {
+                std::string userInput = getStringInput();
                 updateSensorName(sensor);
                 break;
             }
@@ -172,11 +175,12 @@ void updateSensors(std::vector<Sensors::Sensor> &sensors) {
                 break;
             }
             if (updateSelection == 3) {
+                Sensors::Status statusToggled = sensor.sensorStatus() ^ static_cast<uint8_t>(Sensors::Status::enabled);
                 sensor.updateSensorStatus(Sensors::Status::enabled, true);
                 break;
             }
             if (updateSelection == 4 && sensorInBadState) {
-                resetSensorStatus(sensor);
+                sensor.resetSensorStatus();
                 break;
             }
             clearInput();
@@ -239,17 +243,21 @@ double getSensorValueInput(const std::string_view         sensorName,
     return getSignedDoubleInput();
 }
 
+template <typename T>
+void updateSensor(Sensors::Sensor &sensor, T value) {
+    if constexpr (std::is_same<T, double>) {
+        sensor.updateSensorValue(value);
+    } else if constexpr (std::is_same<T, std::string>) {
+        sensor.updateSensorName(value)
+    }
+}
+
 void updateSensorName(Sensors::Sensor &sensor) {
     sensor.updateSensorName(getSensorNameInput(sensor.sensorMetadata()));
 }
 
 void updateSensorValue(Sensors::Sensor &sensor) {
-    sensor.updateSensorValue(
-        getSensorValueInput(sensor.sensorName(), sensor.sensorMetadata()));
-}
-
-void resetSensorStatus(Sensors::Sensor &sensor) {
-    sensor.resetSensorStatus();
+    sensor.updateSensorValue(getSensorValueInput(sensor.sensorName(), sensor.sensorMetadata()));
 }
 
 std::size_t getUnsignedNumericInput(const std::size_t max) {

@@ -162,7 +162,7 @@
 **LearnCpp Chapters:** 28.1–28.6
 
 **Deliverables:**
-- [ ] **Persistent Sensor Program**
+- [x] **Persistent Sensor Program**
 
 **Objectives:**
 1. Save sensor readings to a CSV or text file.

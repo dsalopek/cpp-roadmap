@@ -59,7 +59,7 @@ void displayAllSensors(const std::vector<Sensors::Sensor> &sensors);
 
 void updateSensors(std::vector<Sensors::Sensor> &sensors);
 
-void updateSensorStatus(Sensors::Sensor &sensor);
+void resetSensorStatus(Sensors::Sensor &sensor);
 
 void clearInput();
 
@@ -177,7 +177,7 @@ void updateSensors(std::vector<Sensors::Sensor> &sensors) {
                 break;
             }
             if (updateSelection == 4 && sensorInBadState) {
-                updateSensorStatus(sensor);
+                resetSensorStatus(sensor);
                 break;
             }
             clearInput();
@@ -248,7 +248,7 @@ void updateSensorValue(Sensors::Sensor &sensor) {
         getSensorValueInput(sensor.sensorName(), sensor.sensorMetadata()));
 }
 
-void updateSensorStatus(Sensors::Sensor &sensor) {
+void resetSensorStatus(Sensors::Sensor &sensor) {
     sensor.resetSensorStatus();
 }
 
