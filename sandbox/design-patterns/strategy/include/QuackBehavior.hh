@@ -2,10 +2,10 @@
 
 #define STRATEGY_QUACK_H
 
-class QuackBehavior
-{
+class QuackBehavior {
 public:
     virtual ~QuackBehavior() = default;
+
     virtual void quack() = 0;
 };
 

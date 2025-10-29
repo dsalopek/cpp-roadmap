@@ -4,10 +4,10 @@
 
 #include "QuackBehavior.hh"
 
-class QuietQuack : public QuackBehavior
-{
+class QuietQuack : public QuackBehavior {
 public:
     virtual ~QuietQuack() = default;
+
     void quack() override;
 };
 

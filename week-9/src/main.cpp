@@ -61,9 +61,6 @@ void displayAllSensors(const std::vector<Sensors::Sensor> &sensors);
 
 void updateSensors(std::vector<Sensors::Sensor> &sensors);
 
-template <typename T>
-void updateSensor(Sensors::Sensor &sensor, T value);
-
 void clearInput();
 
 // Declarations end
@@ -114,7 +111,7 @@ int main() {
 
 void printStartup() {
     const std::string name{"main"};
-    const std::string version{"0.0.8"};
+    const std::string version{"0.0.9"};
     const std::string author{"Dylan"};
 
     std::cout << "Starting up...\n";
@@ -149,6 +146,7 @@ void updateSensors(std::vector<Sensors::Sensor> &sensors) {
         Sensors::Sensor &sensor = sensors[sensorSelection - 1];
 
         while (true) {
+            std::cout << "\nSensor: " << sensor << "\n";
             std::cout << "Select an option\n";
             std::cout << "1=name\n2=value\n";
             std::cout << "3=";
@@ -166,7 +164,6 @@ void updateSensors(std::vector<Sensors::Sensor> &sensors) {
             if (updateSelection == 0)
                 return;
             if (updateSelection == 1) {
-                std::string userInput = getStringInput();
                 updateSensorName(sensor);
                 break;
             }
@@ -175,7 +172,6 @@ void updateSensors(std::vector<Sensors::Sensor> &sensors) {
                 break;
             }
             if (updateSelection == 3) {
-                Sensors::Status statusToggled = sensor.sensorStatus() ^ static_cast<uint8_t>(Sensors::Status::enabled);
                 sensor.updateSensorStatus(Sensors::Status::enabled, true);
                 break;
             }
@@ -241,15 +237,6 @@ double getSensorValueInput(const std::string_view         sensorName,
             sensorUnits << ")\n";
 
     return getSignedDoubleInput();
-}
-
-template <typename T>
-void updateSensor(Sensors::Sensor &sensor, T value) {
-    if constexpr (std::is_same<T, double>) {
-        sensor.updateSensorValue(value);
-    } else if constexpr (std::is_same<T, std::string>) {
-        sensor.updateSensorName(value)
-    }
 }
 
 void updateSensorName(Sensors::Sensor &sensor) {

@@ -6,16 +6,14 @@
 #include "../include/NoFly.hh"
 #include <memory>
 
-int main()
-{
-
-    auto loud = std::make_shared<LoudQuack>();
+int main() {
+    auto loud  = std::make_shared<LoudQuack>();
     auto quiet = std::make_shared<QuietQuack>();
 
     auto flyWithWings = std::make_shared<FlyWithWings>();
-    auto noFly = std::make_shared<NoFly>();
+    auto noFly        = std::make_shared<NoFly>();
 
-    MallardDuck mallard{loud, flyWithWings};
+    MallardDuck   mallard{loud, flyWithWings};
     GreenWingTeal greenWingTeal{quiet, noFly};
 
     mallard.display();

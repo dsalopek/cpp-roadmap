@@ -4,11 +4,12 @@
 #include "Duck.hh"
 #include <memory>
 
-class GreenWingTeal : public Duck
-{
+class GreenWingTeal : public Duck {
 public:
     ~GreenWingTeal() = default;
-    GreenWingTeal(std::shared_ptr<QuackBehavior> quackBheavior, std::shared_ptr<FlyBehavior> flyBheavior);
+
+    GreenWingTeal(std::shared_ptr<QuackBehavior> quackBheavior,
+                  std::shared_ptr<FlyBehavior>   flyBheavior);
 
     void display() override;
 };

@@ -4,10 +4,10 @@
 #include "Duck.hh"
 #include <memory>
 
-class MallardDuck : public Duck
-{
+class MallardDuck : public Duck {
 public:
-    MallardDuck(std::shared_ptr<QuackBehavior> quackBehavior, std::shared_ptr<FlyBehavior> flyBehavior);
+    MallardDuck(std::shared_ptr<QuackBehavior> quackBehavior,
+                std::shared_ptr<FlyBehavior>   flyBehavior);
 
     void display() override;
 };

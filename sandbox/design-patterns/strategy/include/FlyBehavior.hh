@@ -2,10 +2,10 @@
 
 #define STRATEGY_FLY_H
 
-class FlyBehavior
-{
+class FlyBehavior {
 public:
     virtual void fly() = 0;
+
     virtual ~FlyBehavior() = default;
 };
 

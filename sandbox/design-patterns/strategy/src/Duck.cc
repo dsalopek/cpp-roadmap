@@ -2,7 +2,11 @@
 #include "../include/FlyBehavior.hh"
 #include "../include/QuackBehavior.hh"
 
-Duck::Duck(std::shared_ptr<QuackBehavior> quackBehavior, std::shared_ptr<FlyBehavior> flyBehavior) : quackBehavior_{quackBehavior}, flyBehavior_{flyBehavior} {}
+Duck::Duck(std::shared_ptr<QuackBehavior> quackBehavior,
+           std::shared_ptr<FlyBehavior>   flyBehavior) : quackBehavior_{
+    quackBehavior
+}, flyBehavior_{flyBehavior} {
+}
 
 void Duck::setFlyBehavior(std::shared_ptr<FlyBehavior> flyBehavior) {
     flyBehavior_ = flyBehavior;

@@ -4,8 +4,7 @@
 
 #include "FlyBehavior.hh"
 
-class NoFly : public FlyBehavior
-{
+class NoFly : public FlyBehavior {
 public:
     void fly() override;
 };
