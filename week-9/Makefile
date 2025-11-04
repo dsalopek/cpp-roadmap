@@ -110,6 +110,7 @@ run: $(TARGET)
 	./$(TARGET)
 
 test: $(TEST_TARGET)
+	@mkdir -p test/data
 	./$(TEST_TARGET)
 # Run targets
 # ===========

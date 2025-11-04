@@ -9,7 +9,9 @@
 #include <optional>
 
 namespace CSV {
-    std::vector<Sensors::Sensor> &loadSensorData(
+    constexpr std::string_view header = "sensorType,sensorName,value,status";
+
+    std::vector<Sensors::Sensor> &Persistence::loadSensorData(
         std::vector<Sensors::Sensor> &sensors, const std::string &filename) {
         std::fstream file{filename, (std::ios::in | std::ios::out)};
         std::cout << "Attempting to load existing sensor data from file: " <<
@@ -25,6 +27,8 @@ namespace CSV {
         std::string str{};
         //skip header
         std::getline(file, str);
+
+        std::cout << "Read\n";
 
         while (std::getline(file, str)) {
             try {
@@ -44,6 +48,7 @@ namespace CSV {
                             sensorName, sm, std::stod(sensorValue),
                             static_cast<std::uint8_t>(std::stoi(sensorStatus))
                         };
+                        std::cout << "Adding sensor\n";
                         sensors.emplace_back(sensor);
                     }
                 }
@@ -58,8 +63,9 @@ namespace CSV {
         return sensors;
     }
 
-    bool saveSensorData(const std::vector<Sensors::Sensor> &sensors,
-                        const std::string &                 filename) {
+    bool Persistence::saveSensorData(
+        const std::vector<Sensors::Sensor> &sensors,
+        const std::string &                 filename) {
         if (sensors.empty()) {
             return false;
         }

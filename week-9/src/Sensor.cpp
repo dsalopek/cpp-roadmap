@@ -25,22 +25,17 @@ namespace {
 
 namespace Sensors {
     const std::uint8_t sensorGoodState{
-        toUint8(Sensors::Status::healthy |
-                Sensors::Status::nominal |
-                Sensors::Status::online)
+        toUint8(Status::healthy |
+                Status::nominal |
+                Status::online)
     };
 
     const std::uint8_t sensorDefaultState{
-        toUint8(Sensors::Status::enabled |
-                Sensors::Status::healthy |
-                Sensors::Status::nominal |
-                Sensors::Status::online)
+        toUint8(Status::enabled |
+                Status::healthy |
+                Status::nominal |
+                Status::online)
     };
-
-    Sensors::Status toggleStatus(Sensors::Sensor &sensor,
-                                 Sensors::Status  toToggle) {
-        return toStatus(sensor.sensorStatus() ^ toUint8(toToggle));
-    }
 
     std::string_view Sensor::sensorName() const {
         return m_sensorName;

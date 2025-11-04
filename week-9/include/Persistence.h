@@ -7,15 +7,20 @@
 #include <string>
 
 namespace CSV {
-    constexpr std::string_view header = "sensorType,sensorName,value,status";
-    const std::string          defaultFilename = "data.csv";
+    const std::string defaultFilename = "data.csv";
 
-    std::vector<Sensors::Sensor> &loadSensorData(
-        std::vector<Sensors::Sensor> &sensors,
-        const std::string &           filename = defaultFilename);
+    class Persistence {
+    public:
+        Persistence() = default;
 
-    bool saveSensorData(const std::vector<Sensors::Sensor> &sensors,
-                        const std::string &filename = defaultFilename);
+        static std::vector<Sensors::Sensor> &loadSensorData(
+            std::vector<Sensors::Sensor> &sensors,
+            const std::string &           filename = defaultFilename);
+
+        static bool saveSensorData(const std::vector<Sensors::Sensor> &sensors,
+                                   const std::string &filename =
+                                           defaultFilename);
+    };
 }
 
 #endif //WEEK_8_PERSISTENCE

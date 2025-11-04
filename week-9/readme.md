@@ -21,9 +21,72 @@ pressure, and altitude. Reads and stores sensor data for next use in CSV format.
 - Sensor flags are tracked as bits in a `std::uint8_t` var, which allows us to perform bitwise operations on the
   flags. (for now just enable/disable and checking if the sensor status is in a 'good' state)
 
-**WEEK 8 Changelog**
-- **Add persistence in the form of CSV**
-- **Add TestSuite for persistence**
+**WEEK 9 Changelog**
+- **Add modular classes**
+
+# Class Diagram
+```mermaid
+---
+title: SensorFusion
+---
+
+classDiagram
+	class Sensor {
+		- std::string sensorName_
+		- double sensorValue_
+		- std::uint8_t sensorStatus_
+		- SensorMetadata* sensorMetadata_
+		  
+		+ Sensor()
+		+ Sensor(string& name, SensorMetadata& sensorMetadata, double initialValue)
+		+ Sensor(string& name, SensorMetadata& sensorMetadata, double initialValue, uint8_t sensorStatus)
+		+ getSensorName() string_view
+		+ getSensorValue() double
+		+ getSensorStatus() uint8_t
+		+ getSensorMetadata() SensorMetadata&
+		+ getSensorDisplay() string
+		+ isEnabled() bool
+		+ isSensorInBadState() bool                
+		+ updateSensorName(T value) void
+		+ operator<<(ostream &out, Sensor& sensor) ostream&
+	}
+	
+	class SensorMetadata {
+		<<struct>>
+		- SensorType sensorType_
+		- std::string sensorUnits_
+		- std::string sensorDisplayName_
+	}
+	
+	Sensor *-- SensorMetadata
+
+	class SensorManager {
+		- vector~Sensor~ sensors_
+		- Persistence persistenceMethod_
+		
+		+ displaySensors() void
+		+ addSensor() void
+		+ removeSensor() void
+		+ updateSensor() void
+	}
+	
+	SensorManager *-- Persistence
+	SensorManager "1" *-- "*" Sensor
+
+	class Persistence {
+		+ loadSensorData(vector~Sensor~ sensors, string& filename) vector~Sensor~
+		+ saveSensorData(vector~Sensor~ sensors, string& filename) bool
+	}
+	
+	MenuManager *-- SensorManager
+	
+	class MenuManager {
+		- MenuState menuState_
+		- SensorManager sensorManager_
+		  
+		+ displayMenu() void
+	}
+```
 
 # Instructions
 Make rules:

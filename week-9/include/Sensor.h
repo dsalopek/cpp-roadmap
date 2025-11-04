@@ -28,8 +28,6 @@ namespace Sensors {
         online  = 0b1000,
     };
 
-    Sensors::Status toggleStatus(Sensors::Status toToggle);
-
     struct SensorMetadata {
         const SensorType       sensorType{};
         const std::string_view sensorUnits{};
