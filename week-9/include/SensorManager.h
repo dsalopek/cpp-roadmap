@@ -25,7 +25,6 @@ public:
 
 private:
     std::vector<Sensors::Sensor> sensors_;
-    CSV::Persistence             persistence_;
 };
 
 #endif //WEEK_9_SENSORMANAGER_H
